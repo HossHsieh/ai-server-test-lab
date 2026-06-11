@@ -1,1 +1,203 @@
+test_plan:
+name: ai_server_evt_debug_test_plan
+version: "0.1.0"
+stage: EVT
+purpose: >
+Engineering debug test plan for a synthetic AI server node.
+EVT focuses on design, firmware, telemetry, and testability gaps.
+The goal is not only to determine pass/fail, but also to collect enough
+data to understand why a failure happens.
 
+stage_focus:
+
+* design_debug
+* firmware_debug
+* telemetry_coverage
+* testability_gap_detection
+* temporary_engineering_limits
+
+metadata_required:
+engineering_unit_id: required
+board_revision: required
+product_revision: required
+firmware_build_id: required
+test_script_version: required
+bench_id: required
+instrument_id: optional
+sensor_configuration: required
+raw_telemetry_path: required
+debug_log_path: required
+test_engineer_note: optional
+
+execution_policy:
+stop_on_first_failure: false
+collect_raw_trace: true
+save_debug_logs: true
+repeat_on_failure: false
+cycle_time_target_sec: null
+
+test_phases:
+
+* phase_name: identify_engineering_unit
+  objective: Confirm that the EVT unit and board revision can be identified.
+  risk_addressed:
+
+  * Wrong engineering unit used for debug
+  * Board revision mismatch
+  * Missing revision traceability
+    measurements:
+  * name: engineering_unit_id_readback
+    type: string
+    expected: present
+    error_id: E-DUT-001
+    error_code: DUT_ID_MISSING
+  * name: board_revision_readback
+    type: string
+    expected: present
+    error_id: E-DUT-002
+    error_code: BOARD_REVISION_MISSING
+    required_logs:
+  * engineering_unit_id
+  * board_revision
+  * product_revision
+  * test_engineer_note
+
+* phase_name: firmware_debug_visibility_check
+  objective: Confirm that firmware exposes enough debug information for EVT investigation.
+  risk_addressed:
+
+  * Firmware error code too generic
+  * Missing reset reason
+  * Missing thermal or power state visibility
+    measurements:
+  * name: firmware_build_id
+    type: string
+    expected: present
+    error_id: E-FW-002
+    error_code: FW_BUILD_ID_MISSING
+  * name: firmware_debug_log_available
+    type: boolean
+    expected: true
+    error_id: E-FW-003
+    error_code: FW_DEBUG_LOG_MISSING
+  * name: reset_reason_code_available
+    type: boolean
+    expected: true
+    error_id: E-FW-004
+    error_code: FW_RESET_REASON_MISSING
+    required_logs:
+  * firmware_build_id
+  * firmware_debug_log
+  * reset_reason_code
+  * firmware_event_log
+
+* phase_name: power_telemetry_trace_check
+  objective: Collect power rail telemetry over time during synthetic load.
+  risk_addressed:
+
+  * Power transient issue
+  * Missing power telemetry
+  * Fixture or contact issue hidden by single-point measurement
+    stimulus:
+    synthetic_load_percent: 50
+    duration_sec: 30
+    measurements:
+  * name: power_rail_12v_trace_available
+    type: boolean
+    expected: true
+    error_id: E-PWR-004
+    error_code: PWR_12V_TRACE_MISSING
+  * name: power_rail_12v_min
+    type: numeric
+    unit: V
+    lower_limit: 11.60
+    error_id: E-PWR-001
+    error_code: PWR_12V_OUT_OF_RANGE
+    required_logs:
+  * power_rail_12v_trace
+  * power_rail_5v_trace
+  * power_rail_3v3_trace
+  * load_profile
+  * raw_telemetry_path
+
+* phase_name: fan_response_debug_check
+  objective: Study fan response behavior and collect enough telemetry to separate fan, firmware, and thermal effects.
+  risk_addressed:
+
+  * Fan hardware issue
+  * Firmware fan-control regression
+  * Missing fan telemetry
+  * Test timeout not yet optimized
+    stimulus:
+    pwm_command_percent: 70
+    duration_sec: 30
+    measurements:
+  * name: fan_rpm_trace_available
+    type: boolean
+    expected: true
+    error_id: E-THERM-004
+    error_code: THERM_FAN_RPM_TRACE_MISSING
+  * name: fan_rpm_after_pwm_70
+    type: numeric
+    unit: RPM
+    lower_limit: 6500
+    note: Temporary EVT engineering limit. Final production limit may differ.
+    error_id: E-THERM-001
+    error_code: THERM_FAN_RAMP_TIMEOUT
+    required_logs:
+  * pwm_command_trace
+  * fan_rpm_trace
+  * package_temperature_trace
+  * firmware_thermal_state
+  * fan_part_number
+  * ambient_temperature_c
+
+* phase_name: thermal_observability_check
+  objective: Verify that enough thermal telemetry is available during synthetic load.
+  risk_addressed:
+
+  * Missing thermal debug visibility
+  * Cannot localize thermal failure
+  * Firmware does not expose sensor history
+    stimulus:
+    synthetic_load_percent: 80
+    duration_sec: 60
+    measurements:
+  * name: package_temperature_trace_available
+    type: boolean
+    expected: true
+    error_id: E-THERM-005
+    error_code: THERM_PACKAGE_TEMP_TRACE_MISSING
+  * name: max_package_temperature
+    type: numeric
+    unit: C
+    upper_limit: 90
+    note: Temporary EVT engineering limit.
+    error_id: E-THERM-002
+    error_code: THERM_PACKAGE_TEMP_HIGH
+    required_logs:
+  * package_temperature_trace
+  * inlet_temperature_trace
+  * outlet_temperature_trace
+  * fan_rpm_trace
+  * firmware_thermal_state
+  * raw_telemetry_path
+
+* phase_name: error_log_scan_debug
+  objective: Collect firmware and BMC logs to identify hidden errors.
+  risk_addressed:
+
+  * Generic failure without diagnostic detail
+  * Hidden BMC-reported hardware fault
+  * Missing firmware debug hooks
+    measurements:
+  * name: critical_error_count
+    type: numeric
+    upper_limit: 0
+    error_id: E-LOG-001
+    error_code: LOG_CRITICAL_ERROR_FOUND
+    required_logs:
+  * bmc_event_log
+  * firmware_error_log
+  * reset_reason_code
+  * debug_log_path
