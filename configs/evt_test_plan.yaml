@@ -1,9 +1,3 @@
-
----
-
-## `configs/evt_debug_recipe.yaml`
-
-```yaml
 schema_version: "0.1"
 
 recipe:
