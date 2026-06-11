@@ -373,6 +373,32 @@ For a large test script, the following items should not be hidden inside hard-co
 
 These should be managed through configuration files, test plan documents, or reviewed data tables.
 
+## Test Plan vs Test Script
+
+EVT, NPI/PVT, and HVM should have different test plan emphasis, but they should not require three completely independent test scripts.
+
+A scalable approach is to use one shared test execution framework with stage-specific test plan configurations.
+
+The shared framework handles:
+
+- Phase execution
+- Measurement collection
+- Pass/fail evaluation
+- Error code mapping
+- Structured logging
+- Report generation
+
+The stage-specific test plans define:
+
+- Which phases to run
+- What metadata to collect
+- How much raw telemetry to save
+- What repeat policy to use
+- What limits or temporary engineering limits apply
+- Whether the test is optimized for debug, qualification, or production screening
+
+This avoids duplicated logic while still allowing EVT, NPI/PVT, and HVM to serve different engineering goals.
+
 ## My Takeaway
 
 A strong test plan connects product risk, measurement design, pass/fail logic, structured logging, and debug action.
