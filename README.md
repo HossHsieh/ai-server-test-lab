@@ -101,7 +101,7 @@ pip install -r requirements.txt
 * Validate EVT recipe:
 
 ```python
-python scripts/validate\_recipe.py configs/evt\_debug\_recipe.yaml
+python scripts/validate_recipe.py configs/evt_debug_recipe.yaml
 ```
 
 ## Disclaimer
