@@ -93,9 +93,16 @@ Create synthetic RCA cases for different product stages:
 ## Quick Validation
 
 * Install dependencies:
+
+```bash
 pip install -r requirements.txt
+```
+
 * Validate EVT recipe:
-python scripts/validate\_recipe.py configs/evt\_debug\_recipe.yaml
+
+```python
+python scripts/validate\\\_recipe.py configs/evt\\\_debug\\\_recipe.yaml
+```
 
 ## Disclaimer
 
