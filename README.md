@@ -56,23 +56,23 @@ All test data, failure modes, telemetry, and station behavior are synthetic.
 
 ## Planned Modules
 
-### 1. OpenHTF Learning Notes
+### 1\. OpenHTF Learning Notes
 
 Summarize the large-test-script concepts learned from OpenHTF and map them to general manufacturing test development principles.
 
-### 2. Test Plan Design
+### 2\. Test Plan Design
 
 Create a simplified EVT / NPI test plan for an AI server test station, including test objectives, measurements, limits, and expected logs.
 
-### 3. OpenHTF-Inspired Demo
+### 3\. OpenHTF-Inspired Demo
 
 Build a small Python-based demo that executes synthetic test phases, records measurements, checks pass/fail criteria, and generates structured logs.
 
-### 4. Station Qualification
+### 4\. Station Qualification
 
 Practice golden-unit, known-bad-unit, and borderline-unit validation to separate station issues from product issues.
 
-### 5. Root-Cause Analysis Cases
+### 5\. Root-Cause Analysis Cases
 
 Create synthetic RCA cases for different product stages:
 
@@ -80,6 +80,22 @@ Create synthetic RCA cases for different product stages:
 * NPI station correlation issue
 * High-volume production firmware regression
 * Component lot change and hard-coded test limit issue
+
+## Current Progress
+
+* Initialized project structure.
+* Added OpenHTF learning notes.
+* Added stage-based test plan concepts.
+* Added EVT test plan for debug and observability.
+* Added runner-readable EVT recipe.
+* Added recipe schema validator.
+
+## Quick Validation
+
+* Install dependencies:
+pip install -r requirements.txt
+* Validate EVT recipe:
+python scripts/validate\_recipe.py configs/evt\_debug\_recipe.yaml
 
 ## Disclaimer
 
