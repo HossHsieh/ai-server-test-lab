@@ -58,17 +58,17 @@ phases:
       - name: "firmware_build_id"
         type: "string"
         expected: "present"
-        error_id: "E-FW-002"
+        error_id: "E-FW-001"
         error_code: "FW_BUILD_ID_MISSING"
       - name: "firmware_debug_log_available"
         type: "boolean"
         expected: true
-        error_id: "E-FW-003"
+        error_id: "E-FW-002"
         error_code: "FW_DEBUG_LOG_MISSING"
       - name: "reset_reason_code_available"
         type: "boolean"
         expected: true
-        error_id: "E-FW-004"
+        error_id: "E-FW-003"
         error_code: "FW_RESET_REASON_MISSING"
     required_logs:
       - "firmware_build_id"
@@ -87,7 +87,7 @@ phases:
       - name: "power_rail_12v_trace_available"
         type: "boolean"
         expected: true
-        error_id: "E-PWR-004"
+        error_id: "E-PWR-002"
         error_code: "PWR_12V_TRACE_MISSING"
       - name: "power_rail_12v_min"
         type: "numeric"
@@ -113,7 +113,7 @@ phases:
       - name: "fan_rpm_trace_available"
         type: "boolean"
         expected: true
-        error_id: "E-THERM-004"
+        error_id: "E-THERM-003"
         error_code: "THERM_FAN_RPM_TRACE_MISSING"
       - name: "fan_rpm_after_pwm_70"
         type: "numeric"
@@ -140,7 +140,7 @@ phases:
       - name: "package_temperature_trace_available"
         type: "boolean"
         expected: true
-        error_id: "E-THERM-005"
+        error_id: "E-THERM-004"
         error_code: "THERM_PACKAGE_TEMP_TRACE_MISSING"
       - name: "max_package_temperature"
         type: "numeric"
