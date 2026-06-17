@@ -100,7 +100,7 @@ The validator checks whether the recipe is structurally valid.
 
 ```text
 
-scripts/validate\_recipe.py
+scripts/validate_recipe.py
 
 ```
 
@@ -128,7 +128,7 @@ The dry-run runner goes one step further.
 
 ```text
 
-scripts/dry\_run\_recipe.py
+scripts/dry_run_recipe.py
 
 ```
 
