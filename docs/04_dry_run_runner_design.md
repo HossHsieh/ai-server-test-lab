@@ -439,8 +439,67 @@ This is important because a real test system should not only print human-readabl
 
 
 ---
+## Synthetic DUT Profile Mode
 
+The dry-run runner now supports an optional synthetic DUT profile mode. (2026.06.21)
 
+In the original dry-run mode, measurement values are generated from the recipe
+itself. For example, a boolean measurement with `expected: true` receives a
+passing `true` value, and a numeric measurement receives a value inside its
+limits. This is useful for validating recipe structure and basic pass/fail logic.
+
+To make the EVT simulation closer to a manufacturing test workflow, the runner
+can also load telemetry values from `configs/dut_profiles.yaml`.
+
+Example command:
+
+```bash
+python scripts/dry_run_recipe.py configs/evt_debug_recipe.yaml \
+  --error-catalog configs/error_catalog.yaml \
+  --dut-profiles configs/dut_profiles.yaml \
+  --profile-name weak_fan_response_unit \
+  --output outputs/evt_dry_run_weak_fan_profile.json
+```
+In this mode, each measurement name is matched against the selected DUT profile's
+telemetry dictionary.
+
+Example:
+```YAML
+telemetry:
+  fan_rpm_after_pwm_70: 6400
+  max_package_temperature: 91.0
+```
+If the recipe contains measurements with the same names, the runner uses these
+profile values instead of generating simulated passing values.
+
+The value source is recorded in the dry-run test record:
+```JSON
+"value_source": "dut_profile_telemetry"
+```
+This design allows the same EVT recipe to produce different outcomes depending
+on the synthetic DUT profile:
+
+  * `golden_evt_unit`: expected to pass all EVT debug checks.
+  * `weak_fan_response_unit`: expected to fail fan response, with possible thermal
+impact as a secondary symptom.
+  * `missing_fw_debug_unit`: expected to expose a firmware debug visibility gap.
+  * `thermal_observability_gap_unit`: expected to expose missing thermal telemetry.
+
+The `--inject-failure` option is still supported and has higher priority than
+DUT profile telemetry. This keeps the runner useful for quick debugging and
+unit-style validation of individual measurement failures.
+
+Priority order for measurement value selection:
+
+  1. `--inject-failure`
+  2. DUT profile telemetry
+  3. Simulated passing value from recipe definition
+
+This keeps the runner framework-independent while moving the project closer to
+an OpenHTF-style test flow where a recipe, DUT context, measurements, and a
+structured test record are clearly separated.
+
+---
 
 ## Design Principle
 
