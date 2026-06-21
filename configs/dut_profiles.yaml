@@ -1,0 +1,163 @@
+schema_version: "0.1.0"
+
+description: >
+  Synthetic DUT profiles for the AI server EVT debug simulation.
+  These profiles are not based on any real product. They are used to
+  model representative manufacturing test scenarios for interview-oriented
+  learning and demonstration.
+
+profiles:
+  golden_evt_unit:
+    description: >
+      Nominal EVT engineering unit. All required debug hooks and telemetry
+      paths are available. Fan, power, thermal, and log checks are expected
+      to pass.
+
+    dut_metadata:
+      dut_id: "SYN-AISRV-EVT-GOLDEN-001"
+      product: "synthetic_ai_server_node"
+      board_revision: "EVT_A0"
+      sku: "AI_SERVER_NODE_SIM"
+      component_lots:
+        fan_module: "FAN_LOT_A"
+        thermal_sensor: "TSENS_LOT_A"
+        power_module: "PWR_LOT_A"
+
+    firmware:
+      build_id: "FW_EVT_0.1.0_DEBUG"
+      debug_log_available: true
+      reset_reason_code_available: true
+
+    fault_model:
+      type: "none"
+      expected_primary_failure: null
+
+    telemetry:
+      engineering_unit_id_readback: "SYN-AISRV-EVT-GOLDEN-001"
+      board_revision_readback: "EVT_A0"
+      firmware_build_id: "FW_EVT_0.1.0_DEBUG"
+      firmware_debug_log_available: true
+      reset_reason_code_available: true
+      power_rail_12v_trace_available: true
+      power_rail_12v_min: 12.6
+      fan_rpm_trace_available: true
+      fan_rpm_after_pwm_70: 7200
+      package_temperature_trace_available: true
+      max_package_temperature: 89.0
+      critical_error_count: 0
+
+  weak_fan_response_unit:
+    description: >
+      EVT unit with weak fan response under PWM 70%. This profile is used
+      to simulate a fan ramp timeout or marginal cooling response.
+
+    dut_metadata:
+      dut_id: "SYN-AISRV-EVT-WEAKFAN-001"
+      product: "synthetic_ai_server_node"
+      board_revision: "EVT_A0"
+      sku: "AI_SERVER_NODE_SIM"
+      component_lots:
+        fan_module: "FAN_LOT_B"
+        thermal_sensor: "TSENS_LOT_A"
+        power_module: "PWR_LOT_A"
+
+    firmware:
+      build_id: "FW_EVT_0.1.0_DEBUG"
+      debug_log_available: true
+      reset_reason_code_available: true
+
+    fault_model:
+      type: "weak_fan_response"
+      expected_primary_failure: "fan_rpm_after_pwm_70"
+
+    telemetry:
+      engineering_unit_id_readback: "SYN-AISRV-EVT-WEAKFAN-001"
+      board_revision_readback: "EVT_A0"
+      firmware_build_id: "FW_EVT_0.1.0_DEBUG"
+      firmware_debug_log_available: true
+      reset_reason_code_available: true
+      power_rail_12v_trace_available: true
+      power_rail_12v_min: 12.5
+      fan_rpm_trace_available: true
+      fan_rpm_after_pwm_70: 6400
+      package_temperature_trace_available: true
+      max_package_temperature: 91.0
+      critical_error_count: 0
+
+  missing_fw_debug_unit:
+    description: >
+      EVT unit where basic functional behavior may still look acceptable,
+      but required firmware debug visibility is missing. This models an
+      EVT/DFT observability gap before NPI.
+
+    dut_metadata:
+      dut_id: "SYN-AISRV-EVT-NOLOG-001"
+      product: "synthetic_ai_server_node"
+      board_revision: "EVT_A0"
+      sku: "AI_SERVER_NODE_SIM"
+      component_lots:
+        fan_module: "FAN_LOT_A"
+        thermal_sensor: "TSENS_LOT_A"
+        power_module: "PWR_LOT_A"
+
+    firmware:
+      build_id: "FW_EVT_0.1.0_NODEBUG"
+      debug_log_available: false
+      reset_reason_code_available: false
+
+    fault_model:
+      type: "missing_firmware_debug_visibility"
+      expected_primary_failure: "firmware_debug_log_available"
+
+    telemetry:
+      engineering_unit_id_readback: "SYN-AISRV-EVT-NOLOG-001"
+      board_revision_readback: "EVT_A0"
+      firmware_build_id: "FW_EVT_0.1.0_NODEBUG"
+      firmware_debug_log_available: false
+      reset_reason_code_available: false
+      power_rail_12v_trace_available: true
+      power_rail_12v_min: 12.6
+      fan_rpm_trace_available: true
+      fan_rpm_after_pwm_70: 7100
+      package_temperature_trace_available: true
+      max_package_temperature: 88.5
+      critical_error_count: 0
+
+  thermal_observability_gap_unit:
+    description: >
+      EVT unit where package temperature behavior cannot be fully analyzed
+      because thermal telemetry trace is missing. This is used to demonstrate
+      why EVT should validate observability, not only pass/fail behavior.
+
+    dut_metadata:
+      dut_id: "SYN-AISRV-EVT-THERMOBS-001"
+      product: "synthetic_ai_server_node"
+      board_revision: "EVT_A0"
+      sku: "AI_SERVER_NODE_SIM"
+      component_lots:
+        fan_module: "FAN_LOT_A"
+        thermal_sensor: "TSENS_LOT_B"
+        power_module: "PWR_LOT_A"
+
+    firmware:
+      build_id: "FW_EVT_0.1.0_DEBUG"
+      debug_log_available: true
+      reset_reason_code_available: true
+
+    fault_model:
+      type: "thermal_observability_gap"
+      expected_primary_failure: "package_temperature_trace_available"
+
+    telemetry:
+      engineering_unit_id_readback: "SYN-AISRV-EVT-THERMOBS-001"
+      board_revision_readback: "EVT_A0"
+      firmware_build_id: "FW_EVT_0.1.0_DEBUG"
+      firmware_debug_log_available: true
+      reset_reason_code_available: true
+      power_rail_12v_trace_available: true
+      power_rail_12v_min: 12.6
+      fan_rpm_trace_available: true
+      fan_rpm_after_pwm_70: 7150
+      package_temperature_trace_available: false
+      max_package_temperature: null
+      critical_error_count: 0
